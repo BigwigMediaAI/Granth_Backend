@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BigwigMediaAI/Granth_Bakend"
+    "url": "git+https://github.com/BigwigMediaAI/Granth_Backend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/BigwigMediaAI/Granth_Bakend/issues"
+    "url": "https://github.com/BigwigMediaAI/Granth_Backend/issues"
   },
-  "homepage": "https://github.com/BigwigMediaAI/Granth_Bakend#readme",
+  "homepage": "https://github.com/BigwigMediaAI/Granth_Backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
