@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const enquirySchema = require("../models/enquiry.model");
+const sendEmail = require("../utils/sendEmail");
 
 // POST /api/prompt/submit
 router.post("/enquiry", async (req, res) => {
@@ -11,8 +12,31 @@ router.post("/enquiry", async (req, res) => {
   }
 
   try {
+    const existing = await enquirySchema.findOne({ email });
+    if (existing) {
+      return res.status(409).json({ error: "Email already exist" });
+    }
+
     const Enquiry = new enquirySchema({ name, phone, email, message });
     await Enquiry.save();
+    // Send confirmation email
+    await sendEmail({
+      to: email,
+      subject: "📬 Thank You for Submitting Your Details",
+      text: "We've received your information and will get back to you shortly.",
+      html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+      <h2>✅ Details Received</h2>
+      <p>Hi there,</p>
+      <p>Thank you for submitting your details. We've received your information successfully.</p>
+      <p>Our team will review your query and get in touch with you shortly.</p>
+      <hr style="margin: 20px 0;" />
+      <p style="font-size: 14px; color: #888;">If you didn't fill out a form recently, you can safely ignore this email.</p>
+      <p>Best regards,<br>The Team</p>
+    </div>
+  `,
+    });
+
     return res.status(200).json({ message: "Form submitted and saved." });
   } catch (error) {
     console.error("Error saving prompt:", error);
