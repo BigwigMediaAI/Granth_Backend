@@ -3,20 +3,57 @@ const router = express.Router();
 const Prompt = require("../models/prompt.model");
 const sendEmail = require("../utils/sendEmail");
 
-// POST /api/prompt/submit
-router.post("/prompt", async (req, res) => {
-  const { name, phone, email } = req.body;
+// STEP 1: Send OTP
+router.post("/send-otp", async (req, res) => {
+  const { email } = req.body;
 
-  if (!name || !phone || !email) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
+  if (!email) return res.status(400).json({ error: "Email is required." });
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
   try {
-    const existing = await Prompt.findOne({ email });
-    if (existing) {
-      return res.status(409).json({ error: "Email already exist" });
+    await Prompt.findOneAndUpdate(
+      { email },
+      { otp, otpExpires, isVerified: false },
+      { upsert: true, new: true }
+    );
+
+    await sendEmail({
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is ${otp}`,
+      html: `<p>Your OTP is <b>${otp}</b>. It will expire in 10 minutes.</p>`,
+    });
+
+    return res.status(200).json({ message: "OTP sent successfully." });
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    return res.status(500).json({ error: "Failed to send OTP." });
+  }
+});
+
+// STEP 2: Verify OTP and Submit Form
+router.post("/verify-otp", async (req, res) => {
+  const { name, phone, email, otp } = req.body;
+
+  if (!name || !phone || !email || !otp)
+    return res.status(400).json({ error: "All fields are required." });
+
+  try {
+    const prompt = await Prompt.findOne({ email });
+
+    if (!prompt || prompt.otp !== otp || prompt.otpExpires < new Date()) {
+      return res.status(400).json({ error: "Invalid or expired OTP." });
     }
-    const newPrompt = new Prompt({ name, phone, email });
+
+    prompt.name = name;
+    prompt.phone = phone;
+    prompt.isVerified = true;
+    prompt.otp = null;
+    prompt.otpExpires = null;
+    await prompt.save();
+
     await sendEmail({
       to: email,
       subject: "📬 Thank You for Submitting Your Details",
@@ -24,7 +61,7 @@ router.post("/prompt", async (req, res) => {
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
           <h2>✅ Details Received</h2>
-          <p>Hi there,</p>
+          <p>Hi ${name},</p>
           <p>Thank you for submitting your details. We've received your information successfully.</p>
           <p>Our team will review your query and get in touch with you shortly.</p>
           <hr style="margin: 20px 0;" />
@@ -33,11 +70,13 @@ router.post("/prompt", async (req, res) => {
         </div>
       `,
     });
-    await newPrompt.save();
-    return res.status(200).json({ message: "Form submitted and saved." });
+
+    return res
+      .status(200)
+      .json({ message: "OTP verified and form submitted." });
   } catch (error) {
-    console.error("Error saving prompt:", error);
-    return res.status(500).json({ error: "Failed to save form." });
+    console.error("Error verifying OTP:", error);
+    return res.status(500).json({ error: "OTP verification failed." });
   }
 });
 
