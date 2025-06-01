@@ -80,4 +80,13 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
+router.get("/leads", async (req, res) => {
+  try {
+    const leads = await Prompt.find().sort({ createdAt: -1 });
+    res.json(leads);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
