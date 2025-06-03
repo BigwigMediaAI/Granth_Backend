@@ -14,4 +14,14 @@ router.post("/list", async (req, res) => {
   }
 });
 
+router.get("/list", async (req, res) => {
+  try {
+    const properties = await Property.find().sort({ createdAt: -1 }); // latest first
+    res.json(properties);
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    res.status(500).json({ error: "Failed to fetch properties." });
+  }
+});
+
 module.exports = router;
