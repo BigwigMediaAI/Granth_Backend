@@ -24,4 +24,21 @@ router.get("/list", async (req, res) => {
   }
 });
 
+// DELETE /api/properties/list/:id
+router.delete("/list/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Property.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    res.json({ message: "Property deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting property:", error);
+    res.status(500).json({ message: "Failed to delete property" });
+  }
+});
+
 module.exports = router;
