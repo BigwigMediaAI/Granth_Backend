@@ -5,6 +5,7 @@ const subscriberRoutes = require("./routes/subscriber.routes");
 const promptRoute = require("./routes/promptConsultation");
 const EnquiryRoute = require("./routes/enquiry.routes");
 const ListProperty = require("./routes/ListProperty.routes");
+const BlogRoute = require("./routes/blog.routes");
 
 require("dotenv").config();
 
@@ -18,6 +19,7 @@ app.use("/", subscriberRoutes);
 app.use("/api", promptRoute);
 app.use("/api", EnquiryRoute);
 app.use("/api/property", ListProperty);
+app.use("/api/blogs", BlogRoute);
 
 // Start server
 app.listen(process.env.PORT, async () => {
