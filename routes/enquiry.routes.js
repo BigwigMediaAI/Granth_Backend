@@ -75,6 +75,8 @@ router.post("/enquiry", async (req, res) => {
   }
 });
 
+const ChatbotModel = require("../models/chatbot.model");
+
 router.post("/chatbot", async (req, res) => {
   const { message } = req.body;
 
@@ -106,10 +108,26 @@ User Question: ${message}
       response.choices[0].message.content.trim() ||
       "Sorry, I couldn’t find an answer.";
 
+    // Save to DB
+    await ChatbotModel.create({
+      userMessage: message,
+      botReply: reply,
+    });
+
     res.json({ reply });
   } catch (error) {
     console.error("Chatbot error:", error);
     res.status(500).json({ error: "Something went wrong with the chatbot." });
+  }
+});
+
+router.get("/chatbot", async (req, res) => {
+  try {
+    const chats = await ChatbotModel.find().sort({ createdAt: -1 }); // latest first
+    res.json(chats);
+  } catch (error) {
+    console.error("Error fetching chat history:", error);
+    res.status(500).json({ error: "Failed to fetch chat history." });
   }
 });
 
