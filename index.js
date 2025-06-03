@@ -4,6 +4,7 @@ const { connect } = require("./config/db");
 const subscriberRoutes = require("./routes/subscriber.routes");
 const promptRoute = require("./routes/promptConsultation");
 const EnquiryRoute = require("./routes/enquiry.routes");
+const ListProperty = require("./routes/ListProperty.routes");
 
 require("dotenv").config();
 
@@ -16,6 +17,7 @@ app.use(cors());
 app.use("/", subscriberRoutes);
 app.use("/api", promptRoute);
 app.use("/api", EnquiryRoute);
+app.use("/api/property", ListProperty);
 
 // Start server
 app.listen(process.env.PORT, async () => {
