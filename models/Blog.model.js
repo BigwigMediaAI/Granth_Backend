@@ -23,7 +23,7 @@ const blogPostSchema = new mongoose.Schema({
     required: true,
   },
   coverImage: {
-    type: String, // renamed from 'image' to 'coverImage' for clarity
+    type: String,
     required: true,
   },
   tags: {
