@@ -6,6 +6,7 @@ const promptRoute = require("./routes/promptConsultation");
 const EnquiryRoute = require("./routes/enquiry.routes");
 const ListProperty = require("./routes/ListProperty.routes");
 const BlogRoute = require("./routes/blog.routes");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/", subscriberRoutes);
