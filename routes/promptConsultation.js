@@ -56,18 +56,20 @@ router.post("/verify-otp", async (req, res) => {
 
     await sendEmail({
       to: email,
-      subject: "📬 Thank You for Submitting Your Details",
+      subject: "Thank You for Visiting Granth- Dream Homes! 🏡",
       text: "We've received your information and will get back to you shortly.",
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h2>✅ Details Received</h2>
-          <p>Hi ${name},</p>
-          <p>Thank you for submitting your details. We've received your information successfully.</p>
-          <p>Our team will review your query and get in touch with you shortly.</p>
-          <hr style="margin: 20px 0;" />
-          <p style="font-size: 14px; color: #888;">If you didn't fill out a form recently, you can safely ignore this email.</p>
-          <p>Best regards,<br>The Team</p>
-        </div>
+         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+      <p>Hi <strong>${name}</strong>,</p>
+      <p>Thank you for visiting <strong>Granth Dream Homes</strong>! We’re glad you stopped by and took the first step toward finding your perfect home or investment property. 🏠✨</p>
+      <p>Whether you're buying, selling, or just exploring the market, our expert team is here to guide you every step of the way. We’re committed to helping you make informed, confident decisions in today’s real estate market.</p>
+      <p>If you have any questions or would like to schedule a consultation, just hit reply — we’d be happy to help!</p>
+      <p>Looking forward to connecting with you soon.</p>
+      <br/>
+      <p>Warm regards,<br/>
+      <strong>Team Granth Dream Homes</strong><br/>
+      📞 9811735666</p>
+    </div>
       `,
     });
 
